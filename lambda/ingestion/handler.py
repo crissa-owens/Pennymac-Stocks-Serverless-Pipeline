@@ -1,8 +1,9 @@
 import os
 import datetime
-import boto3 # type: ignore
+import boto3 
 from typing import Dict, Union
-from massive import RESTClient  # type: ignore
+from massive import RESTClient 
+from decimal import Decimal
 
 # Load environment variables (set via Lambda console or Terraform)
 MASSIVE_API_KEY = os.getenv("MASSIVE_API_KEY")
@@ -12,7 +13,7 @@ TABLE_NAME = os.getenv("TABLE_NAME")
 client: RESTClient = RESTClient(api_key=MASSIVE_API_KEY)
 
 # Initialize DynamoDB resource
-dynamodb = boto3.resource("dynamodb") # type: ignore
+dynamodb = boto3.resource("dynamodb") 
 table: boto3.resource("dynamodb").Table = dynamodb.Table(TABLE_NAME) # type: ignore
 
 
@@ -21,7 +22,7 @@ def fetch_stock_price(stock: str, date: str) -> dict[str, float]:
     Fetch daily open and close prices for a given stock on a specific date.
     Returns a dict: {"open": float, "close": float}
     """
-    aggs: list[dict[str, float]] = list(client.list_aggs(  # type: ignore
+    aggs: list = list(client.list_aggs(
         ticker=stock,
         multiplier=1,
         timespan="day",
@@ -33,8 +34,8 @@ def fetch_stock_price(stock: str, date: str) -> dict[str, float]:
     if not aggs:
         raise ValueError(f"No data returned for {stock} on {date}")
 
-    bar: dict[str, float] = aggs[0]  # latest daily bar
-    return {"open": bar["o"], "close": bar["c"]}
+    bar = aggs[0]
+    return {"open": bar.open, "close": bar.close}
 
 
 def write_to_db(record: dict[str, float | str]):
@@ -42,7 +43,7 @@ def write_to_db(record: dict[str, float | str]):
     Writes the top mover record to DynamoDB.
     record should include: date, ticker, percent_change, closing_price
     """
-    table.put_item(Item=record)  # type: ignore
+    table.put_item(Item=record)  
     print(f"Written to DynamoDB: {record}")
 
 
@@ -74,11 +75,11 @@ def lambda_handler(event: Dict[str, object], context: Dict[str, object]) -> Dict
         return {"statusCode": 500, "body": "No stock data could be fetched today."}
 
     # Prepare record for DynamoDB
-    record: dict[str, float | str] = {
-        "date": yesterday,
-        "ticker": largest_stock_change,
-        "percent_change": round(largest_percent_change, 2),
-        "closing_price": ingested_data[largest_stock_change]['close']
+    record = {
+    "date": yesterday,
+    "ticker": largest_stock_change,
+    "percent_change": Decimal(str(round(largest_percent_change, 2))),
+    "closing_price": Decimal(str(ingested_data[largest_stock_change]['close']))
     }
 
     write_to_db(record)
