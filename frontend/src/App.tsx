@@ -122,7 +122,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: "transform 0.25s ease, box-shadow 0.25s ease"
   },
   cardHover: {
-    transform: "scale(1.05)",
+    transform: "scale(1.03)",
   },
   date: {
     fontSize: "0.9rem",
