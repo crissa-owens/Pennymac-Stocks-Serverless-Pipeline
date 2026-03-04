@@ -20,8 +20,28 @@ def convert_decimals(obj):
 
 def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
     """
-    GET /movers
-    Returns the last 7 market days of winning stocks from DynamoDB.
+    AWS Lambda handler for retrieving market movers data.
+
+    This function handles GET requests to the /movers endpoint and returns
+    the last 7 market days of winning stocks from DynamoDB.
+
+    Args:
+        event (Dict[str, object]): Lambda event object containing request data.
+        context (Dict[str, object]): Lambda context object with runtime information.
+
+    Returns:
+        Dict: HTTP response containing:
+            - statusCode (int): HTTP status code (200 for success)
+            - headers (Dict): Response headers including CORS configuration
+            - body (str): JSON-encoded list of cleaned stock items sorted by date (descending)
+
+    Raises:
+        None explicitly, but may raise exceptions from DynamoDB operations or JSON serialization.
+
+    Note:
+        - Results are sorted by date in descending order
+        - Decimal values from DynamoDB are converted to standard Python types
+        - CORS headers are included to allow cross-origin requests
     """
     response = table.scan()
     items = response.get("Items", [])

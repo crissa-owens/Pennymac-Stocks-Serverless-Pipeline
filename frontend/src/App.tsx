@@ -9,6 +9,21 @@ interface StockMover {
   closing_price: number;
 }
 
+/**
+ * App component that displays a grid of top stock movers with their performance metrics.
+ * 
+ * Fetches stock mover data from an API and renders them in a responsive grid layout.
+ * The first item spans 3 columns, while remaining items are distributed across a 3-column grid.
+ * 
+ * Features:
+ * - Displays stock ticker, date, percent change, and closing price
+ * - Color-codes gains (green) and losses (red)
+ * - Applies hover effects with shadow animations
+ * - Special glow shadow effect for the featured top mover
+ * 
+ * @component
+ * @returns {React.ReactElement} A styled container with stock mover cards
+ */
 function App() {
   const [movers, setMovers] = useState<StockMover[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
