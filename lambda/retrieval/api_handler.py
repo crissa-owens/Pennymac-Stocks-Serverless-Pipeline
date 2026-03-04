@@ -21,24 +21,18 @@ def convert_decimals(obj):
 def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
     """
     GET /movers
-    Returns last 7 days of winning stocks from DynamoDB.
+    Returns the last 7 market days of winning stocks from DynamoDB.
     """
-    today = datetime.datetime.now(datetime.timezone.utc)
-    seven_days_ago = today - datetime.timedelta(days=7)
-    
     response = table.scan()
     items = response.get("Items", [])
 
-    # Filter items from the last 7 days
-    filtered = [
-        item for item in items 
-        if 'date' in item and item['date'] >= seven_days_ago.strftime("%Y-%m-%d")
-    ]
-
     # Sort by date descending
-    filtered.sort(key=lambda x: x['date'], reverse=True)
+    items.sort(key=lambda x: x['date'], reverse=True)
 
-    cleaned = convert_decimals(filtered)
+    # Take the most recent 7 market days
+    last_seven = items[:7]
+
+    cleaned = convert_decimals(last_seven)
 
     return {
         "statusCode": 200,
