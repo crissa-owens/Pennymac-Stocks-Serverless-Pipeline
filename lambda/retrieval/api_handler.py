@@ -3,9 +3,12 @@ import datetime
 import boto3 
 from typing import Dict
 
-stock_movers = os.getenv("stock-movers")
+import os
+import boto3
+
+TABLE_NAME = os.getenv("TABLE_NAME")
 dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(stock_movers) # type: ignore
+table = dynamodb.Table(TABLE_NAME) # type: ignore
 
 def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
     """
