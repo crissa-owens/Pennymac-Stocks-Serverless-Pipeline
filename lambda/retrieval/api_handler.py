@@ -1,14 +1,22 @@
+import json
 import os
 import datetime
 import boto3 
 from typing import Dict
-
-import os
-import boto3
+from decimal import Decimal
 
 TABLE_NAME = os.getenv("TABLE_NAME")
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(TABLE_NAME) # type: ignore
+
+def convert_decimals(obj):
+    if isinstance(obj, list):
+        return [convert_decimals(i) for i in obj]
+    if isinstance(obj, dict):
+        return {k: convert_decimals(v) for k, v in obj.items()}
+    if isinstance(obj, Decimal):
+        return float(obj)
+    return obj
 
 def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
     """
@@ -30,11 +38,14 @@ def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
     # Sort by date descending
     filtered.sort(key=lambda x: x['date'], reverse=True)
 
+    cleaned = convert_decimals(filtered)
+
     return {
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"  # allows frontend to call it
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET"
         },
-        "body": filtered
+        "body": json.dumps(cleaned)
     }

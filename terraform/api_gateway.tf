@@ -40,7 +40,10 @@ resource "aws_lambda_permission" "apigw_invoke" {
 resource "aws_api_gateway_deployment" "stocks_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.stocks_api.id
   triggers = {
-    redeployment = sha1(file("${path.module}/api_gateway.tf"))
+    redeployment = sha1(join("", [
+      file("${path.module}/api_gateway.tf"),
+      file("${path.module}/lambda_api.tf"),
+    ]))
   }
 
   depends_on = [
