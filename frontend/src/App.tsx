@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_URL = "https://ui07bqfkv4.execute-api.us-east-1.amazonaws.com/prod/movers";
+const API_URL = "https://ptatzoulqd.execute-api.us-east-1.amazonaws.com/prod/movers";
 
 interface StockMover {
   date: string;

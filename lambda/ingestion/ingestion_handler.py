@@ -19,12 +19,12 @@ table: boto3.resource("dynamodb").Table = dynamodb.Table(TABLE_NAME) # type: ign
 
 
 def fetch_stock_price(stock: str, date: str): 
-    retries = 8 
+    retries = 2
     for attempt in range(retries): 
         try: aggs = list(client.list_aggs( ticker=stock, multiplier=1, timespan="day", from_=date, to=date, limit=1 )) 
         except Exception as e: 
             if "429" in str(e):
-                wait = 1 + attempt 
+                wait = 15 + attempt 
                 print(f"429 for {stock} on {date}. Retrying in {wait}s...") 
                 time.sleep(wait) 
                 continue 

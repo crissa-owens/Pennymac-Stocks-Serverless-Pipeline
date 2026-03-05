@@ -37,6 +37,7 @@ resource "aws_lambda_permission" "apigw_invoke" {
   source_arn    = "${aws_api_gateway_rest_api.stocks_api.execution_arn}/*/*"
 }
 
+
 resource "aws_api_gateway_deployment" "stocks_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.stocks_api.id
   triggers = {
@@ -44,6 +45,9 @@ resource "aws_api_gateway_deployment" "stocks_api_deployment" {
       file("${path.module}/api_gateway.tf"),
       file("${path.module}/lambda_api.tf"),
     ]))
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 
   depends_on = [
@@ -56,4 +60,7 @@ resource "aws_api_gateway_stage" "stocks_api_stage" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.stocks_api.id
   deployment_id = aws_api_gateway_deployment.stocks_api_deployment.id
+
+  depends_on = [aws_api_gateway_deployment.stocks_api_deployment]
 }
+

@@ -2,7 +2,7 @@
 
 resource "aws_cloudwatch_event_rule" "daily" {
   name                = "daily-stock-ingest"
-  schedule_expression = "cron(0 0 * * ? *)"  # runs every day at midnight UTC
+  schedule_expression = "cron(0 12 * * ? *)"  # runs every day at 12pm UTC
   is_enabled = true
 
 }
