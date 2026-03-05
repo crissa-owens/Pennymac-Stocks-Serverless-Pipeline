@@ -1,2 +1,5 @@
 .env
 terraform.tfvars
+.terraform/
+.venv/
+Project_Challenge_Stocks_Serverless_Pipeline.pdf

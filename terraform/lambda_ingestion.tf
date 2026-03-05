@@ -7,7 +7,7 @@ resource "aws_lambda_function" "stock_ingest" {
   runtime       = "python3.11"
   filename      = "../lambda/ingestion/lambda_ingestion.zip"
   source_code_hash = filebase64sha256("../lambda/ingestion/lambda_ingestion.zip")
-  
+  timeout = 45
 
   environment {
     variables = {
