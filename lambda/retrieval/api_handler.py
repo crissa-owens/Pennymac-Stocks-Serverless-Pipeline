@@ -10,6 +10,26 @@ dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(TABLE_NAME) # type: ignore
 
 def convert_decimals(obj):
+    """
+    Convert Decimal objects to floats recursively throughout a data structure.
+
+    This function traverses through lists, dictionaries, and nested combinations thereof,
+    converting any Decimal objects encountered to their float equivalents. All other
+    data types are returned unchanged.
+
+    Args:
+        obj: The object to convert. Can be a Decimal, dict, list, or any other type.
+
+    Returns:
+        The converted object with all Decimal instances replaced by floats,
+        maintaining the original structure of lists and dictionaries.
+
+    Example:
+        >>> from decimal import Decimal
+        >>> data = {'price': Decimal('19.99'), 'items': [Decimal('1.5'), Decimal('2.5')]}
+        >>> convert_decimals(data)
+        {'price': 19.99, 'items': [1.5, 2.5]}
+    """
     if isinstance(obj, list):
         return [convert_decimals(i) for i in obj]
     if isinstance(obj, dict):
@@ -34,9 +54,6 @@ def lambda_handler(event: Dict[str, object], context: Dict[str, object]):
             - statusCode (int): HTTP status code (200 for success)
             - headers (Dict): Response headers including CORS configuration
             - body (str): JSON-encoded list of cleaned stock items sorted by date (descending)
-
-    Raises:
-        None explicitly, but may raise exceptions from DynamoDB operations or JSON serialization.
 
     Note:
         - Results are sorted by date in descending order
