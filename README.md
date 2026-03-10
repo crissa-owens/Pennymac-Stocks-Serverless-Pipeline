@@ -304,6 +304,12 @@ Live Dashboard
 
 ---
 
+## Credits
+
+- Stock market icon used for the site favicon, sourced from FreePNGImg.
+
+---
+
 # Final Notes
 
 This project was developed as a technical challenge to demonstrate practical experience with:
